@@ -51,8 +51,9 @@ A modern, AI-powered parking management system built with Streamlit and YOLO for
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:8501`
-
+   Navigate to
+   ```bash
+   http://localhost:8501
    ```
 
 ## 📁 Project Structure
