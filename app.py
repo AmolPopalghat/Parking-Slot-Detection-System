@@ -366,7 +366,7 @@ if image_file and st.session_state.model:
     
     with col1:
         section_header("📊 Original Image")
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
     
     with col2:
         section_header("📈 Statistics")
@@ -428,7 +428,7 @@ if image_file and st.session_state.model:
             cv2.rectangle(annotated_image, (x1, y1-text_height-10), (x1+text_width, y1), color, -1)
             cv2.putText(annotated_image, label, (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     
-    st.image(annotated_image, caption="Detection Results", use_column_width=True)
+    st.image(annotated_image, caption="Detection Results", use_container_width=True)
     
     # Explainability Section
     if show_heatmaps:
@@ -470,10 +470,10 @@ if image_file and st.session_state.model:
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
-                        st.image(crop, caption="Original Crop", use_column_width=True)
+                        st.image(crop, caption="Original Crop", use_container_width=True)
                     
                     with col2:
-                        st.image(heatmap_color, caption="Saliency Heatmap", use_column_width=True)
+                        st.image(heatmap_color, caption="Saliency Heatmap", use_container_width=True)
                     
                     with col3:
                         st.markdown("**Analysis:**")
