@@ -1,11 +1,11 @@
 # 🚗 Parking Slot Detection & Analysis
 
-A modern, AI-powered parking management system built with Streamlit and YOLO for real-time parking slot detection and analysis.
+A modern, AI-powered parking management system built with Streamlit and YOLO for parking slot detection and analysis.
 
 ## ✨ Features
 
 - **Smart Detection**: YOLO-based parking slot detection with customizable confidence thresholds
-- **Real-time Analysis**: Instant parking occupancy statistics and visualizations
+- **Instant Analysis**: Instant parking occupancy statistics and visualizations
 - **AI Explainability**: Saliency heatmaps and detailed explanations for each detection
 - **Interactive Dashboard**: Modern, responsive UI with dynamic charts and metrics
 - **Export Functionality**: Download detection results as CSV files
@@ -17,7 +17,6 @@ A modern, AI-powered parking management system built with Streamlit and YOLO for
 - Automatic detection of empty and occupied parking slots
 - Confidence-based filtering for accurate results
 - Detailed bounding box coordinates and area calculations
-- Real-time occupancy rate calculation
 
 ### Visualization
 - Interactive pie charts for parking distribution
@@ -38,7 +37,7 @@ A modern, AI-powered parking management system built with Streamlit and YOLO for
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd parking-detection-app
+   cd Parking-Slot-Detection-System
    ```
 
 2. **Install dependencies**
@@ -54,29 +53,16 @@ A modern, AI-powered parking management system built with Streamlit and YOLO for
 4. **Open your browser**
    Navigate to `http://localhost:8501`
 
-### Docker Deployment
-
-1. **Build the Docker image**
-   ```bash
-   docker build -t parking-detection-app .
-   ```
-
-2. **Run the container**
-   ```bash
-   docker run -p 8501:8501 parking-detection-app
    ```
 
 ## 📁 Project Structure
 
 ```
-parking-detection-app/
-├── app.py                 # Main Streamlit application
-├── requirements.txt       # Python dependencies
-├── Dockerfile            # Docker configuration
-├── .streamlit/
-│   └── config.toml       # Streamlit configuration
-├── README.md             # Project documentation
-└── assets/               # Sample images and models (optional)
+Parking-Slot-Detection-System
+├── app.py
+├── requirements.txt
+├── assets/
+│   └── best.pt
 ```
 
 ## 🔧 Configuration
@@ -106,7 +92,6 @@ The app uses custom configuration in `.streamlit/config.toml`:
 - Interactive hover effects
 
 ### Dynamic Elements
-- Real-time metrics updating
 - Animated loading states
 - Interactive charts with Plotly
 - Expandable analysis sections
@@ -117,18 +102,9 @@ The app automatically recognizes these parking slot classes:
 
 **Empty Slots:**
 - `space-empty`
-- `empty`
-- `vacant`
-- `free`
-- `slot-empty`
-- `empty-slot`
 
 **Occupied Slots:**
 - `space-occupied`
-- `occupied`
-- `car`
-- `vehicle`
-- `slot-occupied`
 
 ## 🔍 Explainability Features
 
@@ -143,21 +119,6 @@ The app automatically recognizes these parking slot classes:
 - Visual complexity assessment
 - Confidence correlation analysis
 
-## 🌐 Deployment Options
-
-### Streamlit Cloud
-1. Push code to GitHub
-2. Connect to Streamlit Cloud
-3. Deploy with one click
-
-### Heroku
-```bash
-heroku create your-app-name
-git push heroku main
-```
-
-### AWS/GCP/Azure
-Use the provided Dockerfile for container deployment
 
 ## 🛠️ Customization
 
@@ -168,27 +129,8 @@ Use the provided Dockerfile for container deployment
 
 ### Styling Changes
 - Modify the CSS in `load_css()` function
-- Update colors in `.streamlit/config.toml`
 - Customize chart themes in Plotly configurations
 
-## 🔧 Troubleshooting
-
-### Common Issues
-
-1. **Model Loading Errors**
-   - Ensure YOLO model is compatible with ultralytics version
-   - Check file format (.pt extension)
-   - Verify model classes match expected names
-
-2. **Memory Issues**
-   - Reduce image size before processing
-   - Adjust confidence threshold to reduce detections
-   - Use Docker with increased memory limits
-
-3. **Performance Optimization**
-   - Enable GPU support for faster inference
-   - Use smaller YOLO models for real-time processing
-   - Implement caching for repeated operations
 
 ## 📝 License
 
