@@ -8,3 +8,4 @@ plotly>=5.15.0
 numpy>=1.24.0
 torch>=2.0.0
 torchvision>=0.15.0
+opencv-python
