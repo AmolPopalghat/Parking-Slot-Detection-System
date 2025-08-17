@@ -252,7 +252,7 @@ def create_pie_chart(empty_count, occupied_count):
             'text': 'Parking Slot Distribution',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 20, 'color': '#2c3e50'}
+            'font': {'size': 20, 'color': "#edf1f5"}
         },
         font=dict(size=14),
         showlegend=True,
@@ -362,53 +362,38 @@ if image_file and st.session_state.model:
     create_metrics(empty_space_count, occupied_space_count)
     
     # Create visualization columns
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([1, 1])
     
     with col1:
-        section_header("📊 Original Image")
-        st.image(image, caption="Uploaded Image")
-    
+        section_header("📊 Parking Slot Visual Analytics")
+
+        # Bar Chart
+        bar_data = pd.DataFrame({
+            "Status": ["Empty", "Occupied"],
+            "Count": [empty_space_count, occupied_space_count]
+        })
+        bar_fig = px.bar(
+            bar_data,
+            x="Status",
+            y="Count",
+            color="Status",
+            color_discrete_map={"Empty": "#27ae60", "Occupied": "#e74c3c"},
+            title="Slot Status Bar Chart",
+            text="Count",
+        )
+        bar_fig.update_traces(textposition='outside')
+        bar_fig.update_layout(height=500) 
+        st.plotly_chart(bar_fig, use_container_width=True)
+
     with col2:
-        section_header("📈 Statistics")
+        section_header("📈 Slot Distribution")
         pie_chart = create_pie_chart(empty_space_count, occupied_space_count)
         if pie_chart:
+            bar_fig.update_layout(height=500) 
             st.plotly_chart(pie_chart, use_container_width=True)
     
-    # Detection Results Table
-    section_header("🔍 Detection Results")
-    detection_data = []
-    
-    for result in results:
-        for box, cls, conf in zip(result.boxes.xyxy, result.boxes.cls, result.boxes.conf):
-            x1, y1, x2, y2 = map(int, box)
-            class_name = model.names[int(cls)]
-            status = "Empty" if class_name.lower() in vacant_class_names else "Occupied"
-            detection_data.append({
-                "Slot ID": len(detection_data) + 1,
-                "Status": status,
-                "Class": class_name,
-                "Confidence": f"{conf:.3f}",
-                "Coordinates": f"({x1}, {y1}, {x2}, {y2})",
-                "Area": f"{(x2-x1) * (y2-y1)} px²"
-            })
-    
-    if detection_data:
-        df = pd.DataFrame(detection_data)
-        st.dataframe(df, use_container_width=True)
-        
-        # Download button for results
-        csv = df.to_csv(index=False)
-        st.download_button(
-            label="📥 Download Detection Results",
-            data=csv,
-            file_name=f"parking_detection_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-            mime="text/csv"
-        )
-    else:
-        st.info("🔍 No detections found. Try adjusting the confidence threshold.")
     
     # Annotated Image
-    section_header("🎯 Annotated Image")
     annotated_image = image_np.copy()
     
     for result in results:
@@ -428,7 +413,54 @@ if image_file and st.session_state.model:
             cv2.rectangle(annotated_image, (x1, y1-text_height-10), (x1+text_width, y1), color, -1)
             cv2.putText(annotated_image, label, (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     
-    st.image(annotated_image, caption="Detection Results")
+    # Image Comparison
+    section_header("🖼️ Image Comparison")
+    img_col1, img_col2 = st.columns(2)
+
+    with img_col1:
+        st.markdown("<div style='text-align:center'>", unsafe_allow_html=True)
+        st.image(image, caption="Original Image")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with img_col2:
+        st.markdown("<div style='text-align:center'>", unsafe_allow_html=True)
+        st.image(annotated_image, caption="Annotated Image")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+
+    # Detection Results Table
+    section_header("🔍 Detection Results")
+    detection_data = []
+    
+    for result in results:
+        for box, cls, conf in zip(result.boxes.xyxy, result.boxes.cls, result.boxes.conf):
+            x1, y1, x2, y2 = map(int, box)
+            class_name = model.names[int(cls)]
+            status = "Empty" if class_name.lower() in vacant_class_names else "Occupied"
+            detection_data.append({
+                "Slot ID": len(detection_data) + 1,
+                "Status": status,
+                "Confidence": f"{conf:.3f}",
+                "Coordinates": f"({x1}, {y1}, {x2}, {y2})",
+                "Area": f"{(x2-x1) * (y2-y1)} px²"
+            })
+    
+    if detection_data:
+        df = pd.DataFrame(detection_data)
+        st.dataframe(df, use_container_width=True)
+        
+        # Download button for results
+        csv = df.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Detection Results",
+            data=csv,
+            file_name=f"parking_detection_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            mime="text/csv"
+        )
+    else:
+        st.info("🔍 No detections found. Try adjusting the confidence threshold.")
+
+
     
     # Explainability Section
     if show_heatmaps:
@@ -490,7 +522,7 @@ if image_file and st.session_state.model:
         
         if explain_data:
             st.subheader("📊 Analysis Summary")
-            st.dataframe(pd.DataFrame(explain_data))
+            st.dataframe(pd.DataFrame(explain_data), use_container_width=True)
     
     # SAM Segmentation (optional)
     # if show_sam_masks:
