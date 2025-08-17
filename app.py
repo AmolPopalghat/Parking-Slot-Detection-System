@@ -190,7 +190,7 @@ def load_css():
 def create_header():
     st.markdown("""
     <div class="custom-header">
-        <h1>🚗 Parking Slot Detection & Analysis</h1>
+        <h1>🚗 Parking Slot Detection Using YOLO & Grad-CAM </h1>
         <p>AI-Powered Smart Parking Management System</p>
     </div>
     """, unsafe_allow_html=True)
@@ -276,12 +276,12 @@ create_header()
 st.sidebar.markdown("### 🔧 Configuration")
 st.sidebar.markdown("---")
 
-st.sidebar.markdown("#### 🤖 YOLO Model")
-model_file = st.sidebar.file_uploader(
-    "Upload YOLO model (.pt)", 
-    type=["pt"],
-    help="Upload your trained YOLO model file"
-)
+# st.sidebar.markdown("#### 🤖 YOLO Model")
+# model_file = st.sidebar.file_uploader(
+#     "Upload YOLO model (.pt)", 
+#     type=["pt"],
+#     help="Upload your trained YOLO model file"
+# )
 
 st.sidebar.markdown("#### 📸 Input Image")
 image_file = st.sidebar.file_uploader(
@@ -301,25 +301,34 @@ confidence_threshold = st.sidebar.slider(
 )
 
 show_heatmaps = st.sidebar.checkbox("Show Explainability Heatmaps", value=True)
-show_sam_masks = st.sidebar.checkbox("Show SAM Segmentation", value=False)
+# show_sam_masks = st.sidebar.checkbox("Show SAM Segmentation", value=False)
+
+# Always use best.pt from directory
+MODEL_PATH = "./assets/best.pt"
+if 'model' not in st.session_state:
+    try:
+        st.session_state.model = YOLO(MODEL_PATH)
+    except Exception as e:
+        st.session_state.model = None
+        st.sidebar.error(f"❌ Error loading model: {str(e)}")
 
 # Initialize session state for model
 if 'model' not in st.session_state:
     st.session_state.model = None
 
 # Load model
-if model_file:
-    if st.session_state.model is None:
-        with st.spinner("🔄 Loading YOLO model..."):
-            try:
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as temp_model_file:
-                    temp_model_file.write(model_file.read())
-                    model_path = temp_model_file.name
-                st.session_state.model = YOLO(model_path)
-                st.sidebar.success("✅ Model loaded successfully!")
-            except Exception as e:
-                st.sidebar.error(f"❌ Error loading model: {str(e)}")
-                st.session_state.model = None
+# if model_file:
+#     if st.session_state.model is None:
+#         with st.spinner("🔄 Loading YOLO model..."):
+#             try:
+#                 with tempfile.NamedTemporaryFile(delete=False, suffix=".pt") as temp_model_file:
+#                     temp_model_file.write(model_file.read())
+#                     model_path = temp_model_file.name
+#                 st.session_state.model = YOLO(model_path)
+#                 st.sidebar.success("✅ Model loaded successfully!")
+#             except Exception as e:
+#                 st.sidebar.error(f"❌ Error loading model: {str(e)}")
+#                 st.session_state.model = None
 
 # Main content
 if image_file and st.session_state.model:
@@ -357,7 +366,7 @@ if image_file and st.session_state.model:
     
     with col1:
         section_header("📊 Original Image")
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image")
     
     with col2:
         section_header("📈 Statistics")
@@ -419,7 +428,7 @@ if image_file and st.session_state.model:
             cv2.rectangle(annotated_image, (x1, y1-text_height-10), (x1+text_width, y1), color, -1)
             cv2.putText(annotated_image, label, (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     
-    st.image(annotated_image, caption="Detection Results", use_column_width=True)
+    st.image(annotated_image, caption="Detection Results")
     
     # Explainability Section
     if show_heatmaps:
@@ -461,10 +470,10 @@ if image_file and st.session_state.model:
                     col1, col2, col3 = st.columns(3)
                     
                     with col1:
-                        st.image(crop, caption="Original Crop", use_column_width=True)
+                        st.image(crop, caption="Original Crop")
                     
                     with col2:
-                        st.image(heatmap_color, caption="Saliency Heatmap", use_column_width=True)
+                        st.image(heatmap_color, caption="Saliency Heatmap")
                     
                     with col3:
                         st.markdown("**Analysis:**")
@@ -481,19 +490,19 @@ if image_file and st.session_state.model:
         
         if explain_data:
             st.subheader("📊 Analysis Summary")
-            st.dataframe(pd.DataFrame(explain_data), use_container_width=True)
+            st.dataframe(pd.DataFrame(explain_data))
     
     # SAM Segmentation (optional)
-    if show_sam_masks:
-        section_header("🎭 SAM Segmentation Analysis")
-        st.info("⚠️ SAM segmentation requires the segment-anything model. Install with: pip install segment-anything")
+    # if show_sam_masks:
+    #     section_header("🎭 SAM Segmentation Analysis")
+    #     st.info("⚠️ SAM segmentation requires the segment-anything model. Install with: pip install segment-anything")
         
-        # Note: SAM integration would require additional setup
-        # This is a placeholder for SAM functionality
-        st.write("SAM segmentation would be implemented here with proper model setup.")
+    #     # Note: SAM integration would require additional setup
+    #     # This is a placeholder for SAM functionality
+    #     st.write("SAM segmentation would be implemented here with proper model setup.")
 
-elif not model_file:
-    st.info("👈 Please upload a YOLO model file (.pt) in the sidebar to get started.")
+# elif not model_file:
+#     st.info("👈 Please upload a YOLO model file (.pt) in the sidebar to get started.")
 elif not image_file:
     st.info("👈 Please upload an image file in the sidebar to analyze parking slots.")
 else:
