@@ -50,15 +50,9 @@ A modern, AI-powered parking management system built with Streamlit and YOLO for
    streamlit run app.py
    ```
 
-4. **Open your browser**
-<<<<<<< HEAD
-   Navigate to `http://localhost:8501`
-
-=======
-   Navigate to
+4. **Open in your browser**
    ```bash
    http://localhost:8501
->>>>>>> e8bac2db0a266295e28aaf2bc567f12e83fc8189
    ```
 
 ## 📁 Project Structure
